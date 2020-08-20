@@ -44,46 +44,98 @@ class Graph:
                     q.enqueue(neighbor)
 
     def dft(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
-        """
-        pass  # TODO
+        s = Stack()
+        s.push(starting_vertex)
+        visited = set()
+        while s.size() > 0:
+            current = s.pop()
+            if current not in visited:
+                print(current)
+                visited.add(current)
+                for neighbor in self.get_neighbors(current):
+                    s.push(neighbor)
 
-    def dft_recursive(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
+    def dft_recursive(self, starting_vertex, visited=None):
+        if visited is None:
+            visited = set()
+        visited.add(starting_vertex)
+        print(starting_vertex)
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+        edges = self.get_neighbors(starting_vertex)
+        if len(edges) == 0:
+            return
+        else:
+            for edge in edges:
+
+                if edge not in visited:
+                    self.dft_recursive(edge, visited)
+                else:
+                    return
 
     def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        pass  # TODO
+        q = Queue()
+        q.enqueue([starting_vertex])
+        visited = set()
+
+        while q.size() > 0:
+            current_path = q.dequeue()
+            current_vertex = current_path[-1]
+            if current_vertex is destination_vertex:
+                return current_path
+            else:
+                if current_vertex not in visited:
+                    visited.add(current_vertex)
+                    edges = self.get_neighbors(current_vertex)
+                    for edge in edges:
+                        path_clone = list(current_path)
+                        path_clone.append(edge)
+                        q.enqueue(path_clone)
+
+
 
     def dfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-        """
-        pass  # TODO
+        s = Stack()
+        s.push([starting_vertex])
+        visited = set()
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
+        while s.size() > 0:
+            current_path = s.pop()
+            current_vertex = current_path[-1]
+            if current_vertex is destination_vertex:
+                return current_path
+            else:
+                if current_vertex not in visited:
+                    visited.add(current_vertex)
+                    edges = self.get_neighbors(current_vertex)
+                    for edge in edges:
+                        path_clone = list(current_path)
+                        path_clone.append(edge)
+                        s.push(path_clone)
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+
+    def dfs_recursive(self, starting_vertex, destination_vertex,path=None,visited=None):
+        print(starting_vertex,"start")
+        if visited is None:
+            visited = set()
+        if path is None:
+            path = []
+        visited.add(starting_vertex)
+        print(path,"path1")
+        path = path + [starting_vertex]
+        print(path,"path2")
+
+        if starting_vertex == destination_vertex:
+            return path
+
+        for edge in self.get_neighbors(starting_vertex):
+            if edge not in visited:
+                new_path = self.dfs_recursive(edge,destination_vertex,path, visited)
+                if new_path:
+                    return new_path
+            else:
+                return None
+
+
 
 
 if __name__ == '__main__':
