@@ -1,11 +1,19 @@
+import random
+from util3 import Queue
+
+
 class User:
     def __init__(self, name):
         self.name = name
 
+
 class SocialGraph:
     def __init__(self):
         self.last_id = 0
+        # Maps id's to user objects lookup table for user object's ids
         self.users = {}
+        # adjacency list
+        # maps user ids to another list of user ids who are their friends
         self.friendships = {}
 
     def add_friendship(self, user_id, friend_id):
@@ -43,10 +51,19 @@ class SocialGraph:
         self.users = {}
         self.friendships = {}
         # !!!! IMPLEMENT ME
-
         # Add users
-
+        for i in range(0, num_users):
+            self.add_user(f"user {i + 1}")
+        possible_friendships = []
         # Create friendships
+        for user_id in self.users:
+            for friend_id in range(user_id+1, self.last_id+1):
+                possible_friendships.append((user_id, friend_id))
+        random.shuffle(possible_friendships)
+        num_friendships = num_users*avg_friendships // 2
+        for i in range(0, num_friendships):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -59,6 +76,30 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+
+        q = Queue()
+
+        q.enqueue([user_id])
+
+        while q.size() > 0:
+            current_path = q.dequeue()
+            friend_node = current_path[-1]
+            if friend_node not in visited and friend_node != user_id:
+                # sets the user_id's edges to the current path
+                visited[friend_node] = current_path
+            for friend_id in self.friendships[friend_node]:
+                # SPREAD OPERATORRRRRRR
+                friendship_path = [*current_path, friend_id]
+                if friend_id not in visited:
+                    q.enqueue(friendship_path)
+                # Changes to shortest path
+                elif len(friendship_path) < len(visited[friend_id]):
+                    visited[friend_node] = friendship_path
+
+        for key in visited:
+            visited[key].reverse()
+            print(f"{key}'s path of friendship to {user_id} is {visited[key]}")
+
         return visited
 
 
